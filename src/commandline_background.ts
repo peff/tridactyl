@@ -1,4 +1,5 @@
 import * as Messaging from "./messaging"
+import * as Native from "./native_background"
 
 export type onLineCallback = (exStr: string) => void
 
@@ -43,6 +44,24 @@ async function allWindowTabs(): Promise<browser.tabs.Tab[]> {
         allTabs = allTabs.concat(tabs)
     }
     return allTabs
+}
+
+/**
+ * Get the selection from the primary selection if possible,
+ * or the clipboard otherwise.
+ */
+export async function getSelection() {
+    if (await Native.nativegate()) await Native.run("xsel -p -o | xsel -b -i")
+    return Messaging.messageActiveTab("commandline_frame", "getClipboard")
+}
+
+/**
+ * Put the string to the clipboard as well as the primary selection
+ * if possible.
+ */
+export async function setSelection(str: string) {
+    await Messaging.messageActiveTab("commandline_frame", "setClipboard", [str])
+    if (await Native.nativegate()) Native.run("xsel -b -o | xsel -p -i")
 }
 
 export async function show(focus = true) {

@@ -2071,7 +2071,7 @@ export async function get_current_url() {
  */
 //#background
 export async function yank(...content: string[]) {
-    await messageActiveTab("commandline_frame", "setClipboard", content)
+    CommandLineBackground.setSelection(content[0])
 }
 
 /** Use the system clipboard.
@@ -2132,12 +2132,12 @@ export async function clipboard(excmd: "open" | "yank" | "yankshort" | "yankcano
             break
         case "open":
             await messageActiveTab("commandline_content", "focus")
-            url = await messageActiveTab("commandline_frame", "getClipboard")
+            url = await CommandLineBackground.getSelection()
             url && open(url)
             break
         case "tabopen":
             await messageActiveTab("commandline_content", "focus")
-            url = await messageActiveTab("commandline_frame", "getClipboard")
+            url = await CommandLineBackground.getSelection()
             url && tabopen(url)
             break
         default:

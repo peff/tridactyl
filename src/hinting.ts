@@ -27,6 +27,7 @@ import * as TTS from "./text_to_speech"
 import { HintSaveType } from "./hinting_background"
 import Logger from "./logging"
 import * as Messaging from "./messaging"
+import { setSelection } from "./commandline_background"
 const logger = new Logger("hinting")
 
 /** Simple container for the state of a single frame's hints. */
@@ -661,25 +662,19 @@ function hintPageExStr(...exStr: string[]) {
 
 function hintPageTextYank() {
     hintPage(elementswithtext(), hint => {
-        messageActiveTab("commandline_frame", "setClipboard", [
-            hint.target.textContent,
-        ])
+        setSelection(hint.target.textContent)
     })
 }
 
 function hintPageTitleAltTextYank() {
     hintPage(titleAltTextElements(), hint => {
-        messageActiveTab("commandline_frame", "setClipboard", [
-            hint.target.title ? hint.target.title : hint.target.alt,
-        ])
+        setSelection(hint.target.title ? hint.target.title : hint.target.alt)
     })
 }
 
 function hintPageYank() {
     hintPage(hintables(), hint => {
-        messageActiveTab("commandline_frame", "setClipboard", [
-            hint.target.href,
-        ])
+        setSelection(hint.target.href)
     })
 }
 
@@ -691,7 +686,7 @@ function hintPageAnchorYank() {
 
         anchorUrl.hash = hint.target.id || hint.target.name
 
-        messageActiveTab("commandline_frame", "setClipboard", [anchorUrl.href])
+        setSelection(anchorUrl.href)
     })
 }
 
